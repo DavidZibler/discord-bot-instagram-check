@@ -64,9 +64,7 @@ class Admin(commands.Cog):
 
                                 # Get string by tesseract image
                                 image_string = pytesseract.image_to_string(tesseract_image, 'eng')
-                                print('Image string ' + image_string)
                                 tesseract_string_array = re.split(r',|\n| ', image_string)
-                                print(tesseract_string_array)
 
                                 # Get user code
                                 message_list = await _generated_code_channel.history().flatten()
