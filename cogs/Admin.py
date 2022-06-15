@@ -14,11 +14,15 @@ min_required_role = "Verified"
 generator_role = "code-generated"
 instagram_verified_role = 'instagram-verified'
 
-# instagram_post_channel = 986306991221768262
+# Live
 # generated_code_channel = 984938847207034941
+# instagram_proof_channel = 986306991221768262
+# failed_proof_channel = 986307051904991232
 
-instagram_proof_channel = 985952165359124565
+# Testing
 generated_code_channel = 983717228098760794
+instagram_proof_channel = 985952165359124565
+failed_proof_channel = 986543485060513813
 
 
 # ----------{ Debug class }----------
@@ -39,6 +43,11 @@ class Admin(commands.Cog):
         gen_role = get(message.guild.roles, name=generator_role)
         min_role = get(message.guild.roles, name=min_required_role)
         insta_role = get(message.guild.roles, name=instagram_verified_role)
+        # Channels
+        _generated_code_channel = self.bot.get_channel(generated_code_channel)
+        _failed_proof_channel = self.bot.get_channel(failed_proof_channel)
+        # Resending
+        code_string: str = ''
 
         if message.channel.id == instagram_proof_channel:   # Check for right channel
             if member != self.bot.user:     # Check for bot (don't react to own message)
@@ -60,7 +69,6 @@ class Admin(commands.Cog):
                                 print(tesseract_string_array)
 
                                 # Get user code
-                                _generated_code_channel = self.bot.get_channel(generated_code_channel)
                                 message_list = await _generated_code_channel.history().flatten()
 
                                 # Control boolean
@@ -81,6 +89,19 @@ class Admin(commands.Cog):
                                                 code_found = True
 
                                 if not member_found:
+                                    # Create failed proof embed
+                                    image_embed = discord.Embed(
+                                        title='Failed proof',
+                                        description='Reason: @name not found \n'
+                                                    '@name: ' + str(member.mention) + '\n'
+                                                                                 'Code: ' + code_string,
+                                        color=discord.Color.dark_magenta()
+                                    )
+                                    image_embed.set_image(url=message.attachments[0].url)
+
+                                    await _failed_proof_channel.send(embed=image_embed)
+
+                                    # Create private message embed
                                     embed = discord.Embed(
                                         title='🚨 **Warning** 🚨',
                                         description='We were no able to find your @name.\n'
@@ -91,10 +112,9 @@ class Admin(commands.Cog):
                                                     'We are going to contact you as soon as we know more.',
                                         color=discord.Color.dark_magenta()
                                     )
-                                    # TODO: Add image to a private channel
                                     await member.send(embed=embed)
                                     await message.channel.send("We didn't find your name. Please contact an admin or moderator.", delete_after=3)
-                                if code_found:
+                                if code_found and member_found:
                                     embed = discord.Embed(
                                         title='🎉 **Congratulations** 🎊',
                                         description='Your instagram story got proofed correctly.\n'
@@ -106,9 +126,22 @@ class Admin(commands.Cog):
                                     await member.send(embed=embed)
                                     await message.channel.send('Instagram code found & proofed.', delete_after=2)  # Code proofed
                                 else:
+                                    # Create failed proof
+                                    image_embed = discord.Embed(
+                                        title='Failed proof',
+                                        description='Reason: Code not found \n'
+                                                    '@name: ' + str(member.mention) + '\n'
+                                                                                 'Code: ' + code_string,
+                                        color=discord.Color.dark_magenta()
+                                    )
+                                    image_embed.set_image(url=message.attachments[0].url)
+
+                                    await _failed_proof_channel.send(embed=image_embed)
+
+                                    # Create private message embed
                                     embed = discord.Embed(
                                         title='🚨 **Warning** 🚨',
-                                        description='We were no able to find your @name.\n'
+                                        description='We were no able to find your code.\n'
                                                     '\n'
                                                     'We are manually checking what happened.\n'
                                                     'This might take some time, stay tuned.\n'
