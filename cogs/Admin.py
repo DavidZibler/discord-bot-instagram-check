@@ -15,14 +15,14 @@ generator_role = "code-generated"
 instagram_verified_role = 'instagram-verified'
 
 # Live
-# generated_code_channel = 984938847207034941
-# instagram_proof_channel = 986306991221768262
-# failed_proof_channel = 986307051904991232
+generated_code_channel = 984938847207034941
+instagram_proof_channel = 986306991221768262
+failed_proof_channel = 986307051904991232
 
 # Testing
-generated_code_channel = 983717228098760794
-instagram_proof_channel = 985952165359124565
-failed_proof_channel = 986543485060513813
+# generated_code_channel = 983717228098760794
+# instagram_proof_channel = 985952165359124565
+# failed_proof_channel = 986543485060513813
 
 
 # ----------{ Debug class }----------
